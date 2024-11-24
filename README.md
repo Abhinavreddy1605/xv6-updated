@@ -337,12 +337,9 @@ EDF is commonly used in real-time systems where meeting deadlines is critical. I
 
 
 ### Scheduling Process:
-1. At time `0`, T1 arrives and starts execution (earliest deadline = 7).
-2. At time `1`, T2 arrives with a closer deadline (D=4), preempting T1.
-3. T2 completes at time `3`, and T3 arrives (D=5).
-4. T3 executes (earliest deadline = 5), followed by T1.
-
-
+![EDF](edf.jpg)
+### Gantt Chart:
+![chart](chart.png)
 ---
 
 ## Key Points
@@ -369,9 +366,7 @@ Rate Monotonic Scheduling (RMS) is a **static priority scheduling algorithm** wi
 ## Utilization Test for RMS
 The following condition must be met for a set of processes to be schedulable using RMS:
 
-\[
-U = \sum_{i=1}^{n} \frac{C_i}{T_i} \leq n \left(2^{\frac{1}{n}} - 1\right)
-\]
+![Utilization Equation](utilization.png)
 
 ### Parameters:
 - \(n\): The number of processes in the system.
@@ -387,15 +382,16 @@ U = \sum_{i=1}^{n} \frac{C_i}{T_i} \leq n \left(2^{\frac{1}{n}} - 1\right)
 3. **Execute Tasks**: The scheduler runs tasks in priority order.
 
 ### Example Scenario:
-| Task | Computation Time (\(C_i\)) | Period (\(T_i\)) | Priority |
-|------|----------------------------|------------------|----------|
-| \(P1\) | 3 ms                       | 20 ms            | Highest  |
-| \(P2\) | 2 ms                       | 8 ms             | Medium   |
-| \(P3\) | 2 ms                       | 10 ms            | Lowest   |
+| Task | Execution Time (\(C\)) | Period (\(P\)) | Arrival Time(A) |
+|------|----------------------------|------------------|-----------------|
+| \(P1\) | 3                        | 20               | 0        |
+| \(P2\) | 2                        | 5                | 0        |
+| \(P3\) | 2                        | 10               | 0        |
 
-- Task \(P_1\) will preempt \(P_2\) or \(P_3\) whenever it becomes ready.
-- Task \(P_2\) can preempt \(P_3\) but not \(P_1\).
-
+### Scheduling Process:
+![RMS](rms.jpg)
+### Gantt Chart:
+![chart](chart1.png)
 ---
 
 ## Advantages of RMS
@@ -417,6 +413,107 @@ U = \sum_{i=1}^{n} \frac{C_i}{T_i} \leq n \left(2^{\frac{1}{n}} - 1\right)
 - **Embedded Systems**: Ideal for microcontroller-based systems with strict timing requirements.
 
 ---
+# Lottery Scheduling
+
+Lottery Scheduling is a probabilistic scheduling algorithm used in operating systems. Unlike traditional scheduling algorithms, it introduces randomness into process selection, making it both unique and efficient in solving common scheduling problems.
+
+---
+
+## Key Features
+
+### 1. **Randomized Scheduling**
+- Processes are scheduled based on a lottery mechanism.
+- Each process holds a set number of lottery tickets, representing its share of the CPU.
+
+### 2. **Preemptive or Non-Preemptive**
+- Lottery scheduling can be implemented in either a preemptive or non-preemptive manner, depending on system requirements.
+
+### 3. **Starvation-Free**
+- By ensuring every process has at least one ticket, the algorithm guarantees all processes have a non-zero probability of being scheduled, eliminating starvation.
+
+---
+
+## How It Works
+
+1. **Ticket Distribution**:
+   - Each process is assigned a number of lottery tickets.
+   - Tickets represent the proportion of CPU time a process is expected to receive.
+   - Processes with more tickets have a higher chance of being selected.
+
+2. **Ticket Selection**:
+   - The scheduler randomly picks a ticket from the pool.
+   - The process holding the selected ticket is executed for a time slice.
+
+3. **Execution**:
+   - The process executes for its allocated time slice.
+   - Afterward, the scheduler selects another random ticket and repeats the process.
+
+---
+
+## Example Scenario
+
+| **Process** | **Number of Tickets(N)** | **Execution Time(C)** |
+|-------------|------------------------|--------------------------|
+| P1          | 50                     |    1                     |
+| P2          | 40                     |    1                     |
+| P3          | 30                     |    2                     |
+| P4          | 25                     |    2                     |
+| P5          | 15                     |    3                     |
+
+### Scheduling Process:
+![lottery](lottery.jpg)
+
+---
+
+## Advantages
+
+1. **Fairness**:
+   - Processes with more tickets get proportionally more CPU time.
+   - Ensures all processes (even those with fewer tickets) have a chance to run.
+
+2. **Flexibility**:
+   - Easily adjusts process priorities by changing ticket allocation.
+
+3. **Starvation-Free**:
+   - Ensures that every process with at least one ticket gets a chance to execute.
+
+---
+
+## Limitations
+
+1. **Overhead**:
+   - Random number generation and ticket selection introduce slight computational overhead.
+
+2. **Unpredictability**:
+   - While fair on average, individual scheduling decisions can be unpredictable.
+
+---
+
+## Applications
+
+- **Interactive Systems**: Suitable for systems requiring fairness and responsiveness.
+- **Soft Real-Time Systems**: Ensures reasonable execution without strict deadlines.
+- **Gaming and Simulations**: Randomized scheduling aligns well with probabilistic events in gaming engines.
+
+---
+
+## Implementation Overview
+
+1. **Assign Tickets**:
+   - Allocate tickets to each process based on priority or need.
+
+2. **Random Selection**:
+   - Generate a random number to select a ticket.
+
+3. **Execute**:
+   - Run the process corresponding to the selected ticket.
+
+4. **Repeat**:
+   - Repeat the process for subsequent scheduling intervals.
+
+---
+
+Lottery Scheduling offers a unique and flexible approach to process scheduling, blending fairness and efficiency with simplicity. Its randomness ensures fairness over time, making it a compelling choice for many system applications.
 
 ## Credits
 This project was developed as a learning exercise for understanding xv6 and operating system internals.
