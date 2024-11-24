@@ -6,7 +6,6 @@ This repository contains custom modifications to the xv6 operating system. The p
 1. **Message Passing (send/receive system calls)**
 2. **`getppid()` system call**
 3. **`ps` system call (process status)**
-4. **Copy system call (`copy`)**
 
 Each system call has been implemented with detailed modifications in the respective kernel files.
 
