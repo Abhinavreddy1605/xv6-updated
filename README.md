@@ -205,25 +205,33 @@ This system call lists all processes and their states.
 
 #### Changes in `proc.c`
 ```c
-int sys_ps(void) {
-    struct proc *p;
-    acquire(&ptable.lock);
-    cprintf("PID	State		Name
-");
-    for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-        if (p->state != UNUSED) {
-            cprintf("%d	%s	%s
-", p->pid, states[p->state], p->name);
-        }
-    }
-    release(&ptable.lock);
-    return 0;
+void procdump(void) {
+  static char *states[] = {
+    [UNUSED]    "UNUSED",
+    [EMBRYO]    "EMBRYO",
+    [SLEEPING]  "SLEEPING",
+    [RUNNABLE]  "RUNNABLE",
+    [RUNNING]   "RUNNING",
+    [ZOMBIE]    "ZOMBIE"
+  };
+  struct proc *p;
+
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+    if(p->state == UNUSED)
+      continue;
+
+    const char *state = (p->state >= 0 && p->state < NELEM(states)) ? states[p->state] : "???";
+    int ppid = (p->parent) ? p->parent->pid : 0;
+
+    cprintf("%d\t%d\t%s\t%s\n", p->pid, ppid, state, p->name);
+  }
 }
 ```
 
 #### Changes in `syscall.h`
 ```c
-#define SYS_ps 25
+#define SYS_ps 29
 ```
 
 #### Changes in `syscall.c`
