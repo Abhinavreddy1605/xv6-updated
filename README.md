@@ -269,6 +269,154 @@ Run a program to display the parent process ID.
 Run the `ps` command to list all processes.
 
 ---
+# Earliest Deadline First (EDF) Scheduling Algorithm
+
+## Overview
+The **Earliest Deadline First (EDF)** is a dynamic priority scheduling algorithm used in **real-time systems**. It ensures that tasks are executed based on their deadlines, making it an **optimal** scheduling approach for both **static** and **dynamic** real-time scheduling. EDF assigns and adjusts task priorities dynamically to meet deadlines effectively.
+
+---
+
+## Key Features
+
+### 1. **Dynamic Priorities**
+EDF dynamically assigns priorities based on the **absolute deadline** of tasks. The task with the **earliest deadline** is given the **highest priority**. This ensures that critical tasks are executed on time.
+
+### 2. **Efficiency**
+EDF can achieve nearly **100% CPU utilization** while guaranteeing the deadlines of all tasks, making it highly efficient compared to other scheduling algorithms in real-time systems.
+
+### 3. **Real-Time Applications**
+EDF is commonly used in real-time systems where meeting deadlines is critical. It supports both periodic and aperiodic tasks, making it suitable for a wide range of applications.
+
+---
+
+## How It Works
+
+1. **Task Definition**:
+   Each task is defined with:
+   - **Execution time (C)**: The time required to complete the task.
+   - **Deadline (D)**: The absolute deadline by which the task must be completed.
+   - **Arrival time (A)**: The time at which the task becomes ready for execution.
+   - **Period (P)**: The time after which all tasks will be executed again.
+
+2. **Priority Assignment**:
+   - The **closer the deadline**, the **higher the priority** of the task.
+   - Task priorities are **updated dynamically** as the system runs.
+
+3. **Execution**:
+   - The task with the earliest deadline is executed first.
+   - Preemption is allowed: If a new task arrives with a closer deadline, it preempts the currently running task.
+
+---
+
+## Advantages
+
+- **Optimal Scheduling**: EDF ensures that all deadlines are met as long as the total CPU utilization does not exceed 100%.
+- **Flexibility**: Suitable for both periodic and aperiodic tasks.
+- **Maximized CPU Utilization**: Achieves near 100% utilization in real-time systems.
+
+---
+
+## Limitations
+
+- **Overhead**: Dynamic priority adjustments can lead to scheduling overhead.
+- **Missed Deadlines**: If CPU utilization exceeds 100%, some deadlines may be missed.
+- **Complexity**: Implementation is more complex compared to static priority algorithms like Rate Monotonic Scheduling (RMS).
+
+---
+
+## Example
+
+### Given Tasks:
+| Task | Execution Time (C) | Deadline (D) | Arrival Time (A) | Period (P) |
+|------|---------------------|--------------|------------------|------------|
+| T1   | 1                  | 2            | 0                | 10          |
+| T2   | 2                  | 5            | 0                | 10          |
+| T3   | 2                  | 4            | 2                | 10          |
+| T4   | 2                  | 10           | 3                | 10          |
+| T5   | 2                  | 9            | 6                | 10          |
+
+
+### Scheduling Process:
+1. At time `0`, T1 arrives and starts execution (earliest deadline = 7).
+2. At time `1`, T2 arrives with a closer deadline (D=4), preempting T1.
+3. T2 completes at time `3`, and T3 arrives (D=5).
+4. T3 executes (earliest deadline = 5), followed by T1.
+
+
+---
+
+## Key Points
+
+1. EDF is an **optimal dynamic priority scheduling** algorithm.
+2. Tasks are executed in order of their **absolute deadlines**.
+3. Ensures **high CPU utilization** and is suitable for real-time systems.
+
+---
+
+This detailed explanation of the EDF algorithm highlights its working mechanism, advantages, limitations, and real-world applications, making it an essential tool for scheduling in time-critical systems.
+# Rate Monotonic Scheduling (RMS)
+
+Rate Monotonic Scheduling (RMS) is a **static priority scheduling algorithm** widely used in real-time operating systems. It assigns fixed priorities to tasks based on their periodic cycle times. The shorter the cycle time, the higher the priority assigned to the task. 
+
+## Key Features
+- **Static Priority Scheduling**: Priorities are assigned once and do not change during runtime.
+- **Preemptive Nature**: A task with higher priority preempts any currently running lower-priority task.
+- **Priority Assignment**: The priority is inversely proportional to the period (shorter period = higher priority).
+- **Mathematical Guarantee**: A set of processes can only be scheduled if they satisfy the utilization equation.
+
+---
+
+## Utilization Test for RMS
+The following condition must be met for a set of processes to be schedulable using RMS:
+
+\[
+U = \sum_{i=1}^{n} \frac{C_i}{T_i} \leq n \left(2^{\frac{1}{n}} - 1\right)
+\]
+
+### Parameters:
+- \(n\): The number of processes in the system.
+- \(C_i\): The computation time (execution time) of process \(i\).
+- \(T_i\): The time period for the process \(i\) to run.
+- \(U\): The total CPU utilization.
+
+---
+
+## How RMS Works
+1. **Assign Priorities**: Each process is assigned a priority inversely proportional to its cycle time \(T_i\). Shorter cycle times receive higher priorities.
+2. **Preempt Running Processes**: If a higher-priority task becomes ready, it immediately preempts the currently running lower-priority task.
+3. **Execute Tasks**: The scheduler runs tasks in priority order.
+
+### Example Scenario:
+| Task | Computation Time (\(C_i\)) | Period (\(T_i\)) | Priority |
+|------|----------------------------|------------------|----------|
+| \(P1\) | 3 ms                       | 20 ms            | Highest  |
+| \(P2\) | 2 ms                       | 8 ms             | Medium   |
+| \(P3\) | 2 ms                       | 10 ms            | Lowest   |
+
+- Task \(P_1\) will preempt \(P_2\) or \(P_3\) whenever it becomes ready.
+- Task \(P_2\) can preempt \(P_3\) but not \(P_1\).
+
+---
+
+## Advantages of RMS
+- **Simplicity**: Easy to implement and widely used in real-time systems.
+- **Predictability**: Task priorities are fixed, ensuring predictable task behavior.
+- **Optimality**: RMS is optimal for fixed-priority scheduling when tasks are periodic and preemptive.
+
+---
+
+## Limitations of RMS
+1. **Task Dependencies**: RMS cannot handle task dependencies well.
+2. **High Utilization Constraint**: The CPU utilization must be kept below a certain threshold \(\left(n \cdot \left(2^{\frac{1}{n}} - 1\right)\right)\).
+3. **Not Suitable for Aperiodic Tasks**: RMS is designed specifically for periodic tasks.
+
+---
+
+## Applications
+- **Real-Time Systems**: Used in automotive systems, medical devices, and telecommunications.
+- **Embedded Systems**: Ideal for microcontroller-based systems with strict timing requirements.
+
+---
 
 ## Credits
 This project was developed as a learning exercise for understanding xv6 and operating system internals.
