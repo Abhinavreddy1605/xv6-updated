@@ -246,65 +246,6 @@ SYSCALL(ps)
 
 ---
 
-### 4. Copy System Call
-The `copy` system call copies the contents of one file to another.
-
-**Modified Files:**
-- `sysfile.c`
-- `syscall.h`
-- `syscall.c`
-- `user.h`
-- `usys.S`
-
-**Code Changes:**
-
-#### Changes in `sysfile.c`
-```c
-int sys_copy(void) {
-    char *src, *dst;
-
-    if (argstr(0, &src) < 0 || argstr(1, &dst) < 0) {
-        return -1;
-    }
-
-    struct file *src_file = fileopen(src, O_RDONLY);
-    struct file *dst_file = fileopen(dst, O_CREATE | O_WRONLY);
-    char buffer[512];
-    int n;
-
-    while ((n = fileread(src_file, buffer, sizeof(buffer))) > 0) {
-        filewrite(dst_file, buffer, n);
-    }
-
-    fileclose(src_file);
-    fileclose(dst_file);
-    return 0;
-}
-```
-
-#### Changes in `syscall.h`
-```c
-#define SYS_copy 26
-```
-
-#### Changes in `syscall.c`
-```c
-extern int sys_copy(void);
-
-[SYS_copy] sys_copy,
-```
-
-#### Changes in `user.h`
-```c
-int copy(char *src, char *dst);
-```
-
-#### Changes in `usys.S`
-```asm
-SYSCALL(copy)
-```
-
----
 
 ### Compilation Instructions
 
@@ -327,12 +268,6 @@ Run a program to display the parent process ID.
 
 ### Testing `ps`
 Run the `ps` command to list all processes.
-
-### Testing `copy`
-Use the `copy` command to duplicate a file:
-```bash
-copy source.txt destination.txt
-```
 
 ---
 
